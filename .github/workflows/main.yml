@@ -16,9 +16,11 @@ jobs:
   job_b:
     runs-on: ubuntu-latest
     needs: job_a
-    if: needs.job_a.outputs.null_value
+#    if: needs.job_a.outputs.null_value
     steps:
-      - run: echo "We've ensured this job will be skipped"
+      - run: |
+              echo "taking some time to be able to test job cancellation"
+              sleep 60
   job_c:
     runs-on: ubuntu-latest
     needs: [job_a, job_b]
@@ -27,8 +29,7 @@ jobs:
       - run: echo "This won't run, even though the IF condition evaluates true."
   job_d:
     runs-on: ubuntu-latest
-    needs: [job_a, job_b]
-#    if: always() && needs.job_a.outputs.truthy_string
+    needs: [job_a, job_b, job_c]
     if: ${{ (success() || !failure()) && ( always() && ! cancelled() ) }}
     steps:
       - run: echo "This should only run if there is no error in any needs job. (Skipped is not an error)"
