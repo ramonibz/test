@@ -28,6 +28,7 @@ jobs:
   job_d:
     runs-on: ubuntu-latest
     needs: [job_a, job_b]
-    if: always() && needs.job_a.outputs.truthy_string
+#    if: always() && needs.job_a.outputs.truthy_string
+    if: ${{ success() || failure() || ( always() && ! cancelled() ) }}
     steps:
-      - run: echo "This will run, even though we've only changed the condition from `true` to `true && true`"
+      - run: echo "This should only run if there is no error in any needs job. (Skipped is not an error)"
